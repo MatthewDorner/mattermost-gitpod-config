@@ -74,15 +74,14 @@ tasks:
       source /workspace/mattermost-gitpod-config/scripts/app/run-app-project.sh
 
   - name: Gitlab
-    command: |
-      echo $(gp url 8068)
-      docker run --hostname $(gp url 8068) \
-        --publish 8070:443 --publish 8068:80 --publish 8072:22 \
-        --name gitlab \
-        --volume $GITLAB_HOME/config:/etc/gitlab \
-        --volume $GITLAB_HOME/logs:/var/log/gitlab \
-        --volume $GITLAB_HOME/data:/var/opt/gitlab \
-        --shm-size 256m \
+    command: >
+      docker run --hostname $(gp url 8068)
+        --publish 8070:443 --publish 8068:80 --publish 8072:22
+        --name gitlab
+        --volume $GITLAB_HOME/config:/etc/gitlab
+        --volume $GITLAB_HOME/logs:/var/log/gitlab
+        --volume $GITLAB_HOME/data:/var/opt/gitlab
+        --shm-size 256m
         gitlab/gitlab-ee:latest
     env:
       GITLAB_HOME: /srv/gitlab      
