@@ -85,9 +85,10 @@ tasks:
       --shm-size 256m
       gitlab/gitlab-ee:latest
     command: |
-      docker start gitlab
+      docker start gitlab --attach
     env:
       GITLAB_HOME: /workspace/gitlab
+      GITLAB_ROOT_PASSWORD: password
 
 github:
   prebuilds:
