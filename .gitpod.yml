@@ -16,6 +16,7 @@ tasks:
       go run ./build/docker-compose-generator/main.go postgres minio | docker-compose -f docker-compose.makefile.yml -f /dev/stdin run -T --rm start_dependencies
       make run-server MM_NO_DOCKER=true
       gp await-port 8065
+      ./bin/mmctl sampledata --local
       make stop-server
       go run ./build/docker-compose-generator/main.go postgres minio | docker-compose -f docker-compose.makefile.yml -f /dev/stdin stop
 
@@ -74,8 +75,8 @@ tasks:
       source /workspace/mattermost-gitpod-config/scripts/app/run-app-project.sh
 
   - name: Gitlab
-    command: >
-      docker run --hostname $(gp url 8068 | grep -oP 'https://\K\S+')
+    init: >
+      docker create --hostname $(gp url 8068 | grep -oP 'https://\K\S+')
       --publish 8070:443 --publish 8068:80 --publish 8072:22
       --name gitlab
       --volume $GITLAB_HOME/config:/etc/gitlab
@@ -83,8 +84,10 @@ tasks:
       --volume $GITLAB_HOME/data:/var/opt/gitlab
       --shm-size 256m
       gitlab/gitlab-ee:latest
+    command: |
+      docker start gitlab
     env:
-      GITLAB_HOME: /srv/gitlab      
+      GITLAB_HOME: /workspace/gitlab
 
 github:
   prebuilds:
